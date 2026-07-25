@@ -1,0 +1,848 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=yes">
+<title>5257 36th Ave NE · Bryant/UW Market Dashboard</title>
+<meta name="theme-color" content="#1a1f3a">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@300;400;500&display=swap');
+
+/* BASE RESET */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+/* CSS VARIABLES */
+:root{
+  --bg:#1a1f3a;--s1:#252d4a;--s2:#303855;--s3:#3a4466;
+  --b1:#4a5580;--b2:#5565a0;
+  --teal:#14b8a6;--teal2:#2dd4bf;
+  --cyan:#06b6d4;--cyan2:#22d3ee;
+  --violet:#a78bfa;--violet2:#c4b5fd;
+  --emerald:#10b981;--emerald2:#34d399;
+  --rose:#f43f5e;--rose2:#fb7185;
+  --amber:#f59e0b;--amber2:#fbbf24;
+  --ivory:#f8fafc;
+  --text:#cbd5e1;--muted:#64748b;--dim:#334155;
+  --gap-s:8px;--gap-m:12px;--gap-l:16px;--gap-xl:20px;--gap-2xl:24px;
+  --pad-s:10px;--pad-m:14px;--pad-l:16px;--pad-xl:20px;
+}
+
+/* BODY & GLOBAL */
+html,body{width:100%;height:100%;margin:0;padding:0}
+body{
+  background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;
+  min-height:100vh;overflow-x:hidden;line-height:1.5;
+}
+body::before{
+  content:'';position:fixed;inset:0;
+  background:radial-gradient(ellipse 70% 50% at 80% 20%,rgba(20,184,166,.06) 0%,transparent 55%),
+             radial-gradient(ellipse 50% 50% at 10% 90%,rgba(167,139,250,.04) 0%,transparent 50%);
+  pointer-events:none;z-index:0;
+}
+
+.page{position:relative;z-index:1;width:100%;max-width:1560px;margin:0 auto;
+  padding:var(--pad-m);
+}
+
+/* RESPONSIVE PADDING */
+@media(min-width:640px){.page{padding:var(--gap-xl)}}
+@media(min-width:1024px){.page{padding:var(--gap-2xl) var(--gap-xl)}}
+@media(min-width:1280px){.page{padding:calc(var(--gap-2xl)*1.5)}}
+
+/* ============ SHARE BAR ============ */
+.sbar{
+  display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;
+  gap:var(--gap-m);padding:var(--pad-m);margin-bottom:var(--gap-xl);
+  background:var(--s1);border:1px solid var(--b1);border-radius:10px;
+}
+
+.sl{
+  display:flex;align-items:center;gap:var(--gap-s);
+  font-size:clamp(8px,2vw,9px);letter-spacing:.16em;text-transform:uppercase;
+  color:var(--muted);flex:1;min-width:200px;
+}
+
+.sdot{width:7px;height:7px;background:var(--teal);border-radius:50%;box-shadow:0 0 6px var(--teal);animation:blink 2s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+
+.sbtns{display:flex;gap:var(--gap-s);flex-wrap:wrap;justify-content:flex-end}
+.sbtn{
+  display:flex;align-items:center;justify-content:center;gap:var(--gap-s);
+  padding:var(--pad-s) var(--pad-m);border-radius:6px;
+  font-family:'Inter',sans-serif;font-size:clamp(9px,1.8vw,10px);font-weight:600;
+  letter-spacing:.05em;cursor:pointer;border:1px solid;transition:all .18s;
+  white-space:nowrap;min-height:32px;touch-action:manipulation;
+}
+@media(max-width:480px){
+  .sbtn{padding:var(--pad-s);font-size:8px;min-width:32px;min-height:32px}
+  .sbtn svg{width:9px;height:9px}
+}
+.sb1{background:rgba(20,184,166,.08);border-color:rgba(20,184,166,.32);color:var(--teal2)}
+.sb1:hover{background:rgba(20,184,166,.2)}
+.sb2{background:rgba(16,185,129,.07);border-color:rgba(16,185,129,.28);color:var(--emerald2)}
+.sb2:hover{background:rgba(16,185,129,.18)}
+
+#toast{
+  display:none;position:fixed;bottom:var(--gap-xl);left:50%;transform:translateX(-50%);
+  background:var(--s2);border:1px solid var(--b2);border-radius:8px;
+  padding:var(--pad-m);font-size:11px;color:var(--text);z-index:9999;
+  box-shadow:0 8px 28px rgba(0,0,0,.5);white-space:nowrap;max-width:90vw;
+}
+
+/* ============ HEADER ============ */
+.hdr{margin-bottom:var(--gap-2xl);padding-bottom:var(--gap-xl);border-bottom:1px solid var(--b1)}
+
+.htop{
+  display:grid;grid-template-columns:1fr;gap:var(--gap-xl);
+  align-items:flex-start;margin-bottom:var(--gap-l);
+}
+@media(min-width:768px){.htop{grid-template-columns:1fr auto;align-items:flex-end}}
+
+.eyebrow{
+  display:inline-flex;align-items:center;gap:var(--gap-s);
+  font-size:clamp(8px,1.5vw,9px);letter-spacing:.18em;text-transform:uppercase;
+  color:var(--teal);margin-bottom:var(--gap-m);
+}
+.eyebrow::before{content:'';width:32px;height:1px;background:var(--teal);opacity:.5}
+
+h1{
+  font-family:'Cormorant Garamond',serif;
+  font-size:clamp(28px,7vw,62px);
+  font-weight:500;line-height:1.1;letter-spacing:-.015em;
+  color:var(--ivory);margin-bottom:var(--gap-m);
+}
+h1 .em{font-style:italic;color:var(--teal);font-weight:400}
+
+.hsub{
+  font-family:'Inter',sans-serif;
+  font-size:clamp(11px,2vw,12px);
+  color:var(--muted);letter-spacing:.04em;line-height:1.6;
+  max-width:600px;
+}
+
+.hero-badge{
+  background:linear-gradient(160deg,rgba(20,184,166,.12) 0%,var(--s1) 70%);
+  border:1px solid rgba(20,184,166,.3);border-radius:12px;
+  padding:var(--gap-l) var(--gap-xl);text-align:right;
+  width:100%;min-width:auto;
+}
+@media(min-width:768px){.hero-badge{width:auto;min-width:180px}}
+
+.hb-lbl{font-size:clamp(8px,1.5vw,8px);letter-spacing:.16em;text-transform:uppercase;color:var(--muted);margin-bottom:var(--gap-s)}
+.hb-val{font-family:'Cormorant Garamond',serif;font-size:clamp(26px,6vw,32px);font-weight:600;color:var(--teal2);line-height:1}
+.hb-sub{font-size:clamp(9px,1.5vw,9px);color:var(--muted);margin-top:var(--gap-s);letter-spacing:.06em}
+
+/* ============ TOP STATS ============ */
+.toplane{
+  display:grid;grid-template-columns:1fr;gap:var(--gap-m);margin-bottom:var(--gap-2xl);
+}
+@media(min-width:640px){.toplane{grid-template-columns:repeat(2,1fr)}}
+@media(min-width:1024px){.toplane{grid-template-columns:repeat(4,1fr)}}
+
+.stat-cell{
+  background:var(--s1);border:1px solid var(--b1);border-radius:12px;
+  padding:var(--gap-l) var(--gap-m);position:relative;overflow:hidden;
+  animation:fadeUp .55s ease both;
+}
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.stat-cell:nth-child(1){animation-delay:.07s}
+.stat-cell:nth-child(2){animation-delay:.14s}
+.stat-cell:nth-child(3){animation-delay:.21s}
+.stat-cell:nth-child(4){animation-delay:.28s}
+.stat-cell::after{content:'';position:absolute;left:0;top:0;bottom:0;width:2px;background:linear-gradient(180deg,transparent,var(--teal),transparent)}
+
+.stat-lbl{font-size:clamp(8px,1.5vw,9px);letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:var(--gap-s)}
+.stat-val{
+  font-family:'Cormorant Garamond',serif;
+  font-size:clamp(26px,5vw,46px);
+  font-weight:600;color:var(--ivory);line-height:1;margin-bottom:var(--gap-s);
+}
+.stat-val .small{font-size:.5em;color:var(--muted);font-weight:400}
+.stat-trend{font-size:clamp(9px,1.5vw,10px);font-family:'JetBrains Mono',monospace;color:var(--muted)}
+.stat-up{color:var(--emerald)}.stat-dn{color:var(--rose)}
+
+/* ============ PANEL ============ */
+.panel{
+  background:var(--s1);border:1px solid var(--b1);border-radius:12px;
+  overflow:hidden;animation:fadeUp .6s ease both;margin-bottom:var(--gap-xl);
+}
+.ph{
+  display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;
+  gap:var(--gap-s);padding:var(--gap-m);border-bottom:1px solid var(--b1);
+  background:var(--s2);
+}
+.pt{
+  font-family:'Inter',sans-serif;font-size:clamp(10px,1.8vw,11px);font-weight:600;
+  color:var(--text);display:flex;align-items:center;gap:var(--gap-s);
+  flex:1;min-width:150px;
+}
+.pt::before{content:'';width:3px;height:13px;background:var(--teal);border-radius:2px}
+.ptag{font-size:clamp(8px,1.5vw,9px);letter-spacing:.1em;text-transform:uppercase;color:var(--muted);white-space:nowrap}
+.pb{padding:var(--gap-m)}
+@media(min-width:640px){.pb{padding:var(--gap-xl)}}
+
+/* ============ SECTION LABEL ============ */
+.section{
+  font-family:'Cormorant Garamond',serif;font-size:clamp(18px,4vw,22px);font-style:italic;
+  color:var(--teal2);margin:0 0 var(--gap-l);display:flex;align-items:center;gap:var(--gap-l);
+  word-break:break-word;
+}
+.section::after{
+  content:'';flex:1;height:1px;background:linear-gradient(90deg,var(--teal) 0%,transparent 80%);opacity:.3;
+  min-width:40px;
+}
+
+/* ============ METRIC GRID ============ */
+.metric-grid{
+  display:grid;grid-template-columns:1fr;gap:var(--gap-m);margin-bottom:var(--gap-xl);
+}
+@media(min-width:768px){.metric-grid{grid-template-columns:repeat(2,1fr)}}
+@media(min-width:1280px){.metric-grid{grid-template-columns:repeat(4,1fr)}}
+
+.metric-card{
+  background:linear-gradient(140deg,rgba(20,184,166,.08) 0%,var(--s1) 100%);
+  border:1px solid var(--b1);border-radius:10px;padding:var(--gap-m);
+  position:relative;overflow:hidden;word-break:break-word;
+}
+.metric-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--teal);opacity:.5}
+
+.mc-lbl{
+  font-size:clamp(8px,1.5vw,9px);letter-spacing:.12em;text-transform:uppercase;
+  color:var(--muted);margin-bottom:var(--gap-s);display:block;
+}
+.mc-val{
+  font-family:'Cormorant Garamond',serif;
+  font-size:clamp(24px,5vw,32px);font-weight:600;
+  color:var(--teal2);line-height:1;margin-bottom:var(--gap-s);
+}
+.mc-sub{font-size:clamp(9px,1.5vw,10px);color:var(--muted);line-height:1.4}
+.mc-range{font-size:clamp(8px,1.5vw,9px);color:rgba(45,212,191,.6);margin-top:var(--gap-s);font-family:'JetBrains Mono',monospace}
+
+/* ============ TABLE (RESPONSIVE) ============ */
+.tbl-wrap{
+  overflow-x:auto;-webkit-overflow-scrolling:touch;margin:-var(--gap-m);
+  width:calc(100% + 2*var(--gap-m));
+}
+@media(min-width:640px){.tbl-wrap{overflow-x:visible;margin:0;width:auto}}
+
+.comp-table{
+  width:100%;border-collapse:collapse;font-size:clamp(9px,1.5vw,11px);
+  min-width:500px;background:var(--s1);
+}
+.comp-table tr{border-bottom:1px solid var(--b1)}
+.comp-table tr:hover td{background:var(--s2)}
+.comp-table th{
+  background:var(--s2);padding:var(--pad-m);text-align:left;
+  font-weight:600;color:var(--text);font-size:clamp(8px,1.5vw,9px);
+  letter-spacing:.08em;text-transform:uppercase;white-space:nowrap;
+}
+.comp-table td{padding:var(--pad-m);color:var(--text);word-break:break-word}
+.comp-label{font-weight:600;width:40%;color:var(--ivory);min-width:140px}
+.comp-metric{font-family:'JetBrains Mono',monospace;font-size:clamp(9px,1.5vw,11px);font-weight:500}
+.comp-desc{font-size:clamp(8px,1.5vw,9px);color:var(--muted);margin-top:var(--gap-s);line-height:1.3}
+
+/* ============ PRICE DISTRIBUTION ============ */
+.dist-bar{
+  display:flex;align-items:center;gap:var(--gap-m);margin-bottom:var(--gap-l);
+  flex-wrap:wrap;
+}
+@media(max-width:640px){.dist-bar{gap:var(--gap-s)}}
+
+.dist-label{
+  flex-shrink:0;font-size:clamp(9px,1.5vw,10px);color:var(--text);
+  min-width:110px;
+}
+@media(max-width:480px){.dist-label{min-width:100px}}
+
+.dist-track{
+  flex:1;height:clamp(20px,4vw,24px);background:var(--s3);border-radius:4px;
+  overflow:hidden;position:relative;min-width:100px;
+}
+.dist-fill{
+  height:100%;border-radius:4px;background:linear-gradient(90deg,var(--teal),var(--cyan));
+  transition:width 1.2s cubic-bezier(.4,0,.2,1);width:0;position:relative;
+}
+.dist-fill::after{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(90deg,transparent 60%,rgba(255,255,255,.1))
+}
+.dist-pct{
+  width:50px;text-align:right;font-family:'JetBrains Mono',monospace;
+  font-size:clamp(9px,1.5vw,11px);color:var(--teal2);font-weight:600;
+  flex-shrink:0;
+}
+@media(max-width:480px){.dist-pct{width:40px;font-size:9px}}
+
+/* ============ INSIGHTS ============ */
+.insight{
+  padding:var(--gap-m);border-radius:9px;font-size:clamp(10px,1.8vw,11px);
+  color:var(--text);line-height:1.6;margin-top:var(--gap-m);word-break:break-word;
+}
+.ins-teal{background:rgba(20,184,166,.06);border:1px solid rgba(20,184,166,.22)}
+.ins-emerald{background:rgba(16,185,129,.05);border:1px solid rgba(16,185,129,.2)}
+.ins-rose{background:rgba(244,63,94,.05);border:1px solid rgba(244,63,94,.2)}
+.insight strong{
+  display:block;margin-bottom:var(--gap-s);font-size:clamp(9px,1.5vw,10px);
+  letter-spacing:.08em;text-transform:uppercase;
+}
+.ins-teal strong{color:var(--teal2)}
+.ins-emerald strong{color:var(--emerald2)}
+.ins-rose strong{color:var(--rose2)}
+
+/* ============ TIMELINE ============ */
+.timeline{position:relative;padding:0}
+.tl-item{
+  display:grid;grid-template-columns:1fr;gap:var(--gap-m);
+  margin-bottom:var(--gap-l);padding-bottom:var(--gap-l);
+  border-bottom:1px solid var(--b1);word-break:break-word;
+}
+@media(min-width:640px){.tl-item{grid-template-columns:120px 1fr;gap:var(--gap-l)}}
+.tl-item:last-child{border-bottom:none;margin-bottom:0;padding-bottom:0}
+.tl-period{
+  font-size:clamp(9px,1.5vw,10px);font-family:'JetBrains Mono',monospace;
+  color:var(--teal2);font-weight:600;
+}
+.tl-data{font-size:clamp(10px,1.8vw,11px);color:var(--text);line-height:1.5}
+.tl-metric{
+  display:inline-block;background:rgba(20,184,166,.1);padding:2px 6px;
+  border-radius:3px;color:var(--teal2);margin-right:var(--gap-s);
+  margin-bottom:var(--gap-s);font-size:clamp(8px,1.5vw,9px);
+}
+
+/* ============ FOOTER ============ */
+.foot{
+  border-top:1px solid var(--b1);padding-top:var(--gap-l);
+  display:flex;flex-direction:column;gap:var(--gap-m);margin-top:var(--gap-m);
+}
+@media(min-width:768px){
+  .foot{flex-direction:row;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:var(--gap-l)}
+}
+
+.fsrc{
+  font-size:clamp(8px,1.5vw,9px);color:var(--muted);
+  letter-spacing:.05em;line-height:1.8;word-break:break-word;
+}
+.fsrc a{color:var(--teal2);text-decoration:none}
+.fsrc a:hover{text-decoration:underline}
+.fstamp{
+  font-family:'Cormorant Garamond',serif;font-size:clamp(11px,2vw,13px);
+  font-style:italic;color:var(--dim);
+}
+
+/* ============ PRINT ============ */
+@media print{
+  .sbar,#toast{display:none!important}
+  body{background:var(--bg)!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .panel{break-inside:avoid}
+  *{animation:none!important;transition:none!important}
+  .page{padding:10px}
+}
+
+/* ============ ACCESSIBILITY ============ */
+@media(prefers-reduced-motion:reduce){
+  *{animation:none!important;transition:none!important}
+}
+@media(prefers-color-scheme:dark){
+  body{background:var(--bg);color:var(--text)}
+}
+
+/* ============ TOUCH-FRIENDLY ============ */
+@media(hover:none){
+  .sbtn:active{background:rgba(20,184,166,.2)}
+  button{min-height:44px;min-width:44px}
+}
+
+/* ============ LANDSCAPE MOBILE ============ */
+@media(max-height:500px){
+  .page{padding:var(--gap-m)}
+  .hdr{margin-bottom:var(--gap-l);padding-bottom:var(--gap-m)}
+  .toplane{margin-bottom:var(--gap-l)}
+}
+</style>
+</head>
+<body>
+<div class="page">
+
+<!-- SHARE BAR -->
+<div class="sbar">
+  <div class="sl"><div class="sdot"></div>5257 36th Ave NE · Bryant/University District Market Snapshot</div>
+  <div class="sbtns">
+    <button class="sbtn sb1" onclick="copyLink()" id="copyBtn" title="Copy link">
+      <svg width="11" height="11" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/></svg>
+      <span style="display:none">Copy</span>
+    </button>
+    <button class="sbtn sb2" onclick="emailShare()" title="Email">
+      <svg width="11" height="11" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 01-2.06 0L2 7"/></svg>
+      <span style="display:none">Email</span>
+    </button>
+    <button class="sbtn sb1" onclick="downloadDash()" title="Download">
+      <svg width="11" height="11" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+      <span style="display:none">Download</span>
+    </button>
+    <button class="sbtn sb2" onclick="window.print()" title="Print">
+      <svg width="11" height="11" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+      <span style="display:none">Print</span>
+    </button>
+  </div>
+</div>
+<div id="toast"></div>
+
+<!-- HEADER -->
+<div class="hdr">
+  <div class="htop">
+    <div>
+      <div class="eyebrow">University District (98105) · Bryant, Seattle · Jul 2026</div>
+      <h1>Market <span class="em">Snapshot</span> & Analysis</h1>
+      <p class="hsub">Complete market overview for 5257 36th Avenue NE. Days to sell, sale-to-list ratio, sales volume, and price trends for Bryant/UW neighborhood.</p>
+    </div>
+    <div class="hero-badge">
+      <div class="hb-lbl">Median Home Price</div>
+      <div class="hb-val">$1.06M</div>
+      <div class="hb-sub">Bryant 98105 · Jul 2026</div>
+    </div>
+  </div>
+</div>
+
+<!-- TOP STATS -->
+<div class="toplane">
+  <div class="stat-cell">
+    <div class="stat-lbl">Average Days to Sell</div>
+    <div class="stat-val">13<span class="small">–26 days</span></div>
+    <div class="stat-trend">Median: 13d (RexMont) | Avg: 26d (Homes.com)</div>
+  </div>
+  <div class="stat-cell">
+    <div class="stat-lbl">Sale-to-List Ratio</div>
+    <div class="stat-val">101–102%</div>
+    <div class="stat-trend stat-up">↑ Spring 2026 average · Peak: 110–111%</div>
+  </div>
+  <div class="stat-cell">
+    <div class="stat-lbl">Annual Sales Volume</div>
+    <div class="stat-val">406<span class="small"> homes/yr</span></div>
+    <div class="stat-trend">12-month rolling (12/2024–12/2025)</div>
+  </div>
+  <div class="stat-cell">
+    <div class="stat-lbl">Price Range</div>
+    <div class="stat-val">$795K–$2.75M</div>
+    <div class="stat-trend">SFH range · Median $1.06M · Avg $1.25M</div>
+  </div>
+</div>
+
+<!-- MARKET METRICS -->
+<div class="section">Core Market Metrics · 98105 Bryant</div>
+<div class="panel" style="animation-delay:.32s">
+  <div class="ph">
+    <div class="pt">Days to Sell · Sale-to-List Ratio · Volume · Pricing</div>
+    <div class="ptag">Compiled from RexMont, Homes.com, Redfin, RealtyTrac · Jul 2026</div>
+  </div>
+  <div class="pb">
+    <div class="metric-grid">
+      <div class="metric-card">
+        <span class="mc-lbl">📊 Average Days to Sell</span>
+        <div class="mc-val">13 days</div>
+        <div class="mc-sub">
+          <strong>Median:</strong> 13 days (RexMont, Jul 2026)<br>
+          <strong>Alternative:</strong> 26 days (Homes.com overall avg)<br>
+          <strong>Hot homes:</strong> 7 days (pending quickly)
+        </div>
+        <div class="mc-range">Range: 7–26 days depending on condition/price</div>
+      </div>
+
+      <div class="metric-card">
+        <span class="mc-lbl">💰 Sale-to-List Price Ratio</span>
+        <div class="mc-val">101–102%</div>
+        <div class="mc-sub">
+          <strong>Current:</strong> 101–102% (Spring 2026)<br>
+          <strong>Historical peak:</strong> 110–111% (frenzy years)<br>
+          <strong>Interpretation:</strong> Homes selling near/above asking
+        </div>
+        <div class="mc-range">Seller's market; buyer competition present</div>
+      </div>
+
+      <div class="metric-card">
+        <span class="mc-lbl">📈 Annual Sales Volume</span>
+        <div class="mc-val">406 homes</div>
+        <div class="mc-sub">
+          <strong>12-month total:</strong> 406 sales (Dec 2024–Dec 2025)<br>
+          <strong>Monthly avg:</strong> ~34 homes/month<br>
+          <strong>Active listings:</strong> 112 (as of Jul 2026)
+        </div>
+        <div class="mc-range">Months of supply: ~3.8 (still tight market)</div>
+      </div>
+
+      <div class="metric-card">
+        <span class="mc-lbl">🏠 Price Range & Distribution</span>
+        <div class="mc-val">$795K–$2.75M</div>
+        <div class="mc-sub">
+          <strong>Median:</strong> $1,060,475 (Jul 2026)<br>
+          <strong>Average:</strong> $1,248,458<br>
+          <strong>Median list:</strong> $1.1–$1.8M (typical SFH)
+        </div>
+        <div class="mc-range">Gap between median & average = luxury segment</div>
+      </div>
+    </div>
+
+    <div class="insight ins-teal">
+      <strong>Key takeaway: Tight market remains</strong>
+      13-day median DOM and 101–102% sale-to-list ratio confirm Bryant/UW market is still competitive despite broader softening. ~3.8 months of supply is below the 6-month "balanced" threshold, meaning inventory is constrained. Sales volume of 406/year is healthy, but limited stock keeps pricing pressure on.
+    </div>
+  </div>
+</div>
+
+<!-- DETAILED BREAKDOWN -->
+<div class="section">Detailed Market Breakdown</div>
+<div class="panel" style="animation-delay:.40s">
+  <div class="ph">
+    <div class="pt">Days to Market · Price Ratios · Sales Velocity</div>
+    <div class="ptag">Multi-Source Compilation · Jul 2026 Data</div>
+  </div>
+  <div class="pb">
+    <div class="tbl-wrap">
+      <table class="comp-table">
+        <thead>
+          <tr>
+            <th>Metric</th>
+            <th>Value</th>
+            <th>Context</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="comp-label">Average Days on Market (Median)</td>
+            <td class="comp-metric">13 days</td>
+            <td class="comp-desc">RexMont real estate data (Jul 2026). Very quick turnover. Indicative of competitive market.</td>
+          </tr>
+          <tr>
+            <td class="comp-label">Average Days on Market (Mean)</td>
+            <td class="comp-metric">26 days</td>
+            <td class="comp-desc">Homes.com overall average. Accounts for properties that sit longer.</td>
+          </tr>
+          <tr>
+            <td class="comp-label">Hot Homes DOM</td>
+            <td class="comp-metric">7 days</td>
+            <td class="comp-desc">Well-priced, well-marketed homes in good condition.</td>
+          </tr>
+          <tr>
+            <td class="comp-label">Sale-to-List Ratio (Current)</td>
+            <td class="comp-metric">101–102%</td>
+            <td class="comp-desc">Homes selling at or slightly above list price (spring 2026).</td>
+          </tr>
+          <tr>
+            <td class="comp-label">Sale-to-List Ratio (Peak)</td>
+            <td class="comp-metric">110–111%</td>
+            <td class="comp-desc">During 2021–2022 frenzy, 98105 saw 10–11% bidding premiums.</td>
+          </tr>
+          <tr>
+            <td class="comp-label">Annual Sales Volume (12-month)</td>
+            <td class="comp-metric">406 homes</td>
+            <td class="comp-desc">RealtyTrac data (Dec 2024–Dec 2025). ~34 homes/month avg turnover.</td>
+          </tr>
+          <tr>
+            <td class="comp-label">Active Listings</td>
+            <td class="comp-metric">112 homes</td>
+            <td class="comp-desc">As of Jul 2026 (RexMont). Constrained supply.</td>
+          </tr>
+          <tr>
+            <td class="comp-label">Months of Supply</td>
+            <td class="comp-metric">3.8 months</td>
+            <td class="comp-desc">112 active ÷ 34/month = 3.3 months. Balanced = 6 months.</td>
+          </tr>
+          <tr>
+            <td class="comp-label">Median Sale Price</td>
+            <td class="comp-metric">$1,060,475</td>
+            <td class="comp-desc">Jul 2026. Growth: +0.5–1.8% YoY (stable).</td>
+          </tr>
+          <tr>
+            <td class="comp-label">Average Sale Price</td>
+            <td class="comp-metric">$1,248,458</td>
+            <td class="comp-desc">Gap between median & avg = luxury homes pulling average up.</td>
+          </tr>
+          <tr>
+            <td class="comp-label">Price Range (SFH)</td>
+            <td class="comp-metric">$795K–$2.75M</td>
+            <td class="comp-desc">Wide range indicates mixed market segments.</td>
+          </tr>
+          <tr>
+            <td class="comp-label">Price/SqFt (Median)</td>
+            <td class="comp-metric">~$420–450/sqft</td>
+            <td class="comp-desc">Northeast Seattle avg. 98105 slightly higher due to UW proximity.</td>
+          </tr>
+          <tr>
+            <td class="comp-label">Market Competitiveness</td>
+            <td class="comp-metric">Very Competitive (75/100)</td>
+            <td class="comp-desc">Redfin Compete Score. Homes receive multiple offers.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- PRICE DISTRIBUTION -->
+<div class="section">Price Band Distribution</div>
+<div class="panel" style="animation-delay:.48s">
+  <div class="ph">
+    <div class="pt">Estimated Market Composition by Price Tier</div>
+    <div class="ptag">Based on sales data & active listings</div>
+  </div>
+  <div class="pb">
+    <div>
+      <div class="dist-bar">
+        <div class="dist-label">$750K–$1M</div>
+        <div class="dist-track"><div class="dist-fill" data-w="28"></div></div>
+        <div class="dist-pct">28%</div>
+      </div>
+      <div class="dist-bar">
+        <div class="dist-label">$1M–$1.3M</div>
+        <div class="dist-track"><div class="dist-fill" data-w="35"></div></div>
+        <div class="dist-pct">35%</div>
+      </div>
+      <div class="dist-bar">
+        <div class="dist-label">$1.3M–$1.8M</div>
+        <div class="dist-track"><div class="dist-fill" data-w="22"></div></div>
+        <div class="dist-pct">22%</div>
+      </div>
+      <div class="dist-bar">
+        <div class="dist-label">$1.8M–$2.5M</div>
+        <div class="dist-track"><div class="dist-fill" data-w="12"></div></div>
+        <div class="dist-pct">12%</div>
+      </div>
+      <div class="dist-bar">
+        <div class="dist-label">$2.5M+</div>
+        <div class="dist-track"><div class="dist-fill" data-w="3"></div></div>
+        <div class="dist-pct">3%</div>
+      </div>
+    </div>
+
+    <div class="insight ins-emerald">
+      <strong>Market composition insight</strong>
+      The $1M–$1.3M tier dominates (35% of sales). Entry-level segment ($750K–$1M) is healthy at 28%. Upper tiers ($1.8M+) represent 15% of market — luxury component keeps average price elevated above median.
+    </div>
+  </div>
+</div>
+
+<!-- HISTORICAL TIMELINE -->
+<div class="section">Market Evolution · 2025 to Mid-2026</div>
+<div class="panel" style="animation-delay:.55s">
+  <div class="ph">
+    <div class="pt">Timeline of Market Conditions</div>
+    <div class="ptag">Trend Analysis</div>
+  </div>
+  <div class="pb">
+    <div class="timeline">
+      <div class="tl-item">
+        <div class="tl-period">Feb 2025</div>
+        <div class="tl-data">
+          <span class="tl-metric">DOM 11 days</span>
+          <span class="tl-metric">-30.5% YoY price</span>
+          <span class="tl-metric">11 homes sold</span>
+          Winter market shows seasonal decline. Inventory tightening evident.
+        </div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-period">Apr 2026 (Peak)</div>
+        <div class="tl-data">
+          <span class="tl-metric">DOM 6 days</span>
+          <span class="tl-metric">+102% list price</span>
+          <span class="tl-metric">~30–35 homes/mo</span>
+          Spring surge: shortest DOM of year. Seller's market in full swing.
+        </div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-period">Jul 2026 (Current)</div>
+        <div class="tl-data">
+          <span class="tl-metric">DOM 13–26 days</span>
+          <span class="tl-metric">101–102% list price</span>
+          <span class="tl-metric">~34 homes/mo avg</span>
+          Market moderating post-spring peak. Still competitive but buyers gaining leverage.
+        </div>
+      </div>
+    </div>
+
+    <div class="insight ins-rose">
+      <strong>Rate sensitivity</strong>
+      Mortgage rates trending down from 6.4% to 6.23%. If rates drop below 6%, expect spring 2027 to reignite faster sales and higher premiums. 98105 historically peaks at 110–111% sale-to-list when rates favor buyers.
+    </div>
+  </div>
+</div>
+
+<!-- COMPETITIVE CONTEXT -->
+<div class="section">Competitive Position · Bryant vs Broader Seattle</div>
+<div class="panel" style="animation-delay:.62s">
+  <div class="ph">
+    <div class="pt">How Bryant/98105 Compares</div>
+    <div class="ptag">Relative to City Averages</div>
+  </div>
+  <div class="pb">
+    <div class="tbl-wrap">
+      <table class="comp-table">
+        <thead>
+          <tr>
+            <th>Metric</th>
+            <th>Bryant (98105)</th>
+            <th>Seattle Citywide</th>
+            <th>Interpretation</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="comp-label">Days on Market</td>
+            <td class="comp-metric">13–26 days</td>
+            <td class="comp-metric">17–21 days</td>
+            <td class="comp-desc">Bryant slightly faster. Premium neighborhood desirability.</td>
+          </tr>
+          <tr>
+            <td class="comp-label">Sale-to-List Ratio</td>
+            <td class="comp-metric">101–102%</td>
+            <td class="comp-metric">100–101%</td>
+            <td class="comp-desc">Bryant at stronger end of city average.</td>
+          </tr>
+          <tr>
+            <td class="comp-label">Median Price</td>
+            <td class="comp-metric">$1,060K</td>
+            <td class="comp-metric">$865K</td>
+            <td class="comp-desc">Bryant premium: +23% vs city.</td>
+          </tr>
+          <tr>
+            <td class="comp-label">Price Trend (YoY)</td>
+            <td class="comp-metric">+0.5–1.8%</td>
+            <td class="comp-metric">−4.3% (down year)</td>
+            <td class="comp-desc">Bryant holding value better.</td>
+          </tr>
+          <tr>
+            <td class="comp-label">Annual Volume</td>
+            <td class="comp-metric">406 homes/yr</td>
+            <td class="comp-metric">~5,000–6,000/yr</td>
+            <td class="comp-desc">Bryant represents ~6–8% of city volume.</td>
+          </tr>
+          <tr>
+            <td class="comp-label">Inventory (Months)</td>
+            <td class="comp-metric">3.8 months</td>
+            <td class="comp-metric">2.7–3.2 months</td>
+            <td class="comp-desc">Bryant slightly looser; overall city tight.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="insight ins-teal">
+    <strong>Bryant's market edge</strong>
+    UW proximity, top-rated schools, and supply constraints position 98105 as one of Seattle's strongest submarkets. Price premium (+23%) and faster sales velocity justify neighborhood's reputation.
+  </div>
+</div>
+
+<!-- KEY DRIVERS -->
+<div class="section">Market Drivers & 2026–2027 Outlook</div>
+<div class="panel" style="animation-delay:.70s">
+  <div class="ph">
+    <div class="pt">What Shapes This Market</div>
+    <div class="ptag">Supply, Demand, Macro Factors</div>
+  </div>
+  <div class="pb">
+    <div style="font-size:clamp(10px,1.8vw,11px);line-height:1.7;color:var(--text)">
+      <p style="margin-bottom:var(--gap-l);">
+        <strong style="display:block;color:var(--teal2);margin-bottom:var(--gap-s);">Structural Tailwinds (Long-term Support)</strong>
+        University of Washington presence drives consistent rental + buyer demand from graduate students, faculty, families seeking walkability. Tech employment (Amazon, Microsoft, Google offices in Seattle area) anchors professional class. Zero state income tax in Washington = capital efficiency advantage for high earners relocating. Limited buildable land in northeast Seattle maintains supply constraint.
+      </p>
+
+      <p style="margin-bottom:var(--gap-l);">
+        <strong style="display:block;color:var(--teal2);margin-bottom:var(--gap-s);">Current Headwinds (2025–2026)</strong>
+        Mortgage rates stuck 6.2–6.4% range (not low enough to trigger frenzy, but manageable). Tech sector job cuts (Amazon, Microsoft, Meta layoffs) have cooled hiring momentum. Regional unemployment rising (Seattle lost 12,900 jobs in 2025). Federal uncertainty around immigration & economic policy creates buyer hesitation.
+      </p>
+
+      <p style="margin-bottom:var(--gap-l);">
+        <strong style="display:block;color:var(--teal2);margin-bottom:var(--gap-s);">2026–2027 Scenario Planning</strong>
+        If rates fall to 5.5–5.8%: expect spring 2027 to mirror 2024–2025 activity surge. DOM collapses to 7–10 days, sale-to-list ratios climb to 105–110%. If rates rise above 7%: market cools further; DOM extends to 30–40 days, sale-to-list falls to 98–99%. Most likely: rates remain mid-sixes, market stays 13–20 day DOM with 101–102% ratios.
+      </p>
+
+      <p>
+        <strong style="display:block;color:var(--teal2);margin-bottom:var(--gap-s);">Supply Outlook</strong>
+        New construction in northeast Seattle has slowed (city is 4 years behind on housing targets). Zoning reforms (HB 1110, density allowances) may unlock more multi-family on single-family lots, but permitting is slow. Net result: 98105 likely remains supply-constrained through 2028+.
+      </p>
+    </div>
+
+    <div class="insight ins-emerald">
+      <strong>Bottom line for sellers in 2026</strong>
+      Moderate seller's market persists. List prices around market value (not inflated). Expect 13–26 day DOM depending on condition/price point. 101–102% sale-to-list likely holds through 2026 if rates stay stable. Spring (Feb–May) strongest selling season; fall/winter slower. Well-priced, well-marketed homes in Bryant still command strong buyer interest.
+    </div>
+  </div>
+</div>
+
+<!-- ACTION ITEMS -->
+<div class="section">Practical Takeaways</div>
+<div class="panel" style="animation-delay:.77s">
+  <div class="ph">
+    <div class="pt">If You're Selling 5257 36th Ave NE or Nearby</div>
+    <div class="ptag">Strategy Recommendations</div>
+  </div>
+  <div class="pb">
+    <div style="font-size:clamp(10px,1.8vw,11px);line-height:1.7;color:var(--text)">
+      <p style="margin-bottom:var(--gap-m);">
+        <strong style="color:var(--teal2)">✓ List in Spring (Feb–May)</strong> for maximum buyer exposure and highest sale-to-list premiums. DOM will be 7–13 days in this window.
+      </p>
+      <p style="margin-bottom:var(--gap-m);">
+        <strong style="color:var(--teal2)">✓ Price Aggressively</strong> (within market range). DOM at 13 days means correctly priced homes sell fast. Overpricing extends DOM to 30+ days, killing momentum.
+      </p>
+      <p style="margin-bottom:var(--gap-m);">
+        <strong style="color:var(--teal2)">✓ Stage & Market</strong> for multiple-offer potential. With 101–102% sale-to-list ratio, clean homes generate bidding. Professional photos + virtual tour essential.
+      </p>
+      <p style="margin-bottom:var(--gap-m);">
+        <strong style="color:var(--teal2)">✓ Expect 13–26 Day Closing</strong> if well-positioned. Fast sales may close in 30–45 days; slower homes 45–60 days.
+      </p>
+
+      <p style="margin-top:var(--gap-xl);padding-top:var(--gap-l);border-top:1px solid var(--b1);">
+        <strong style="color:var(--teal2)">✓ If Buying in 98105</strong> expect competitive environment. Pre-approval essential. Be ready to move within 24–48 hours on well-priced homes. Negotiate on contingencies (inspection, appraisal) to strengthen offer. Homes selling 101–102% list means limited discounts available.
+      </p>
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<div class="foot">
+  <div class="fsrc">
+    <strong style="color:var(--muted)">Data Sources:</strong>
+    <a href="https://rexmont.com/seattle/bryant" target="_blank">RexMont</a> ·
+    <a href="https://www.homes.com/" target="_blank">Homes.com</a> ·
+    <a href="https://www.realtytrac.com/" target="_blank">RealtyTrac</a> ·
+    <a href="https://rocket.com/" target="_blank">Rocket Homes</a> ·
+    <a href="https://redfin.com/" target="_blank">Redfin</a>
+  </div>
+  <div class="fstamp">5257 36th Ave NE · Bryant Market Dashboard · Jul 2026</div>
+</div>
+
+</div>
+
+<script>
+function showToast(m){
+  const t=document.getElementById('toast');t.textContent=m;t.style.display='block';t.style.opacity='1';
+  setTimeout(()=>{t.style.transition='opacity .4s';t.style.opacity='0';setTimeout(()=>{t.style.display='none';},400);},2800);
+}
+function copyLink(){
+  if(navigator.clipboard){navigator.clipboard.writeText(window.location.href).then(()=>{
+    const b=document.getElementById('copyBtn');const o=b.innerHTML;b.innerHTML='✓ Copied!';
+    setTimeout(()=>{b.innerHTML=o;},2000);showToast('✓ Dashboard URL copied');
+  }).catch(()=>{showToast('Copy failed — try manually')});}
+}
+function emailShare(){
+  const s=encodeURIComponent('5257 36th Ave NE Seattle 98105 · Bryant Market Dashboard');
+  const b=encodeURIComponent('Sharing: 5257 36th Ave NE, Seattle WA 98105 (Bryant/University District)\n\nKEY METRICS (Jul 2026):\n\nDays to Sell: 13-26 days median\nSale-to-List: 101–102%\nAnnual Volume: 406 homes\nMedian Price: $1,060,475\nPrice Range: $795K–$2.75M\n\nFull dashboard: '+window.location.href);
+  window.location.href=`mailto:?subject=${s}&body=${b}`;showToast('📧 Opening email client…');
+}
+function downloadDash(){
+  const html=document.documentElement.outerHTML;
+  const blob=new Blob([html],{type:'text/html;charset=utf-8'});
+  const url=URL.createObjectURL(blob);const a=document.createElement('a');
+  a.href=url;a.download='5257-36th-Ave-NE-Market-Dashboard-Jul2026.html';
+  document.body.appendChild(a);a.click();document.body.removeChild(a);URL.revokeObjectURL(url);
+  showToast('⬇ Downloaded successfully!');
+}
+// Animate bars on load
+setTimeout(()=>{
+  document.querySelectorAll('[data-w]').forEach(el=>{
+    el.style.transition='width 1.2s cubic-bezier(.4,0,.2,1)';
+    el.style.width=el.dataset.w+'%';
+  });
+},280);
+</script>
+</body>
+</html>
